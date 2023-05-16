@@ -1,3 +1,8 @@
+'''Scrape Ticketmaster for the ticket availability and pricing 
+   data of a given event by filtering network response logs'''
+
+
+
 from time import sleep
 import json
 from selenium_stealth import stealth
@@ -25,7 +30,7 @@ stealth(ticketmaster_uc,
 
 
 
-# Access ticket availibility and pricing data for event at url
+# Access ticket availibility and ticket pricing data for event at url
 def get_ticket_data(driver, url):
 
     '''Note: eventually we will want a try/except 
@@ -36,25 +41,34 @@ def get_ticket_data(driver, url):
     sleep(5)
     logs = driver.get_log('performance')
 
-    # Filter for response containing section-wise ticket availibility
+    # Filter for response containing section-wise availibility
     availability_keyword = 'by=inventorytypes+offertypes+accessibility+offers+section+priceLevelSecnames+ticketTypes&q=available&available=true'
     availability_response = find_network_response(driver, logs, availability_keyword)
-    print(availability_response['facets'])
-    print(len(availability_response['facets']))
 
-    # Filter for response containing ticket pricing
+    # Filter for response containing pricing
     pricing_keyword = 'by=offers&show=listpricerange&q=available&available=true'
     pricing_response = find_network_response(driver, logs, pricing_keyword)
-    print(len(pricing_response['facets']))
 
-    sleep(5)
+    '''Want to check that responses were found'''
+    
+    # Create dictionary of pricing by offer code
+    offer_pricing = {}
+    for entry in pricing_response['facets']:
+        offer_pricing[entry['offers'][0]] = entry['listPriceRange']
+
+    # Merge pricing and availability data joining on offer code
+    for entry in availability_response['facets']:
+        entry['listPriceRange'] = offer_pricing[entry['offers'][0]]
+
+    return availability_response
 
 
 
 # Filter through network response logs for keyword 
 def find_network_response(driver, logs, keyword):
 
-    '''Want to also think about where to do error checking here'''
+    '''Might want to also think about where to do error checking here
+       - Maybe Check logs are not empty'''
 
     for log in logs:
         log = json.loads(log["message"])["message"]
@@ -68,6 +82,7 @@ def find_network_response(driver, logs, keyword):
                 pass
 
     return {}
+
 
 
 # Testing
