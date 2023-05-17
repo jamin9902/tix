@@ -4,45 +4,93 @@
 import sqlite3
 import os
 
+db_location = "db/trial.db"
+
 # Delete database file if it exists
-if os.path.exists("db/trial.db"):
-  os.remove("db/trial.db")
+if os.path.exists(db_location):
+  os.remove(db_location)
 
 # Create database file
-con = sqlite3.connect("db/trial.db")
-cur = con.cursor()
+try:
+  con = sqlite3.connect(db_location)
+  cur = con.cursor()
+  print("Database created successfully")
+except sqlite3.Error as error:
+  print("Error while creating a sqlite table", error)
 
 
 ############################################################################################################
-# Create Static Event Table
-cur.execute('''CREATE TABLE staticEventInfo(eventID, eventName, venue, city, stateCode, country, eventDate, eventTime, eventURL, userTrackingList)''')
-# Insert a row of data
-cur.execute("INSERT INTO staticEventInfo VALUES ('1', 'Bruce Springsteen and the E Street Band', 'Gillette Stadium', 'Foxborough', 'MA', 'US', '2023-08-24', '19:00:00', 'https://www.ticketmaster.com/bruce-springsteen-and-the-e-street-foxborough-massachusetts-08-24-2023/event/01005E4DD61A4439', '0')")
-# Query the database and obtain data as Python objects
-data = cur.execute("SELECT * FROM staticEventInfo")
-print(data.fetchall())
+try:
+  # Create Static Event Table
+  cur.execute('''CREATE TABLE IF NOT EXISTS staticEventInfo(eventID, eventName, venue, city, stateCode, country, eventDate, eventTime, eventURL, userTrackingList)''')
+except:
+  print("Error while creating a sqlite table")
+
+def insertStaticEventInfo(eventID, eventName, venue, city, stateCode, country, eventDate, eventTime, eventURL, userTrackingList):
+  try:
+    # Insert a row of data
+    cur.execute("INSERT INTO staticEventInfo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (eventID, eventName, venue, city, stateCode, country, eventDate, eventTime, eventURL, userTrackingList))
+    con.commit()
+  except:
+    print("Error while inserting into staticEventInfo table")
+
+def printAllStaticEventInfo():
+  try:
+    # Query the database and obtain data as Python objects
+    data = cur.execute("SELECT * FROM staticEventInfo")
+    return data.fetchall()
+  except:
+    print("Error while selecting from staticEventInfo table")
 ############################################################################################################
 
 
 ############################################################################################################
-# Create Web Scraped Event Table
-cur.execute('''CREATE TABLE webScrapedEventInfo(eventID, sectionName, count, priceRange, inventoryType, accessibility, offerCodes, offerType)''')
-# Insert a row of data
-cur.execute("INSERT INTO webScrapedEventInfo VALUES ('1', 'Section 1', '100', '100-200', 'Standard', 'Standard', '12345', 'Standard')")
-# Query the database and obtain data as Python objects
-data = cur.execute("SELECT * FROM webScrapedEventInfo")
-print(data.fetchall())
+try:
+  # Create Web Scraped Event Table
+  cur.execute('''CREATE TABLE IF NOT EXISTS webScrapedEventInfo(eventID, sectionName, count, priceRange, inventoryType, accessibility, offerCodes, offerType)''')
+except:
+  print("Error while creating a sqlite table")
+
+def insertWebScrapedEventInfo(eventID, sectionName, count, priceRange, inventoryType, accessibility, offerCodes, offerType):
+  try:
+    # Insert a row of data
+    cur.execute("INSERT INTO webScrapedEventInfo VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (eventID, sectionName, count, priceRange, inventoryType, accessibility, offerCodes, offerType))
+    con.commit()
+  except:
+    print("Error while inserting into webScrapedEventInfo table")
+
+def printAllWebScrapedEventInfo():
+  try:
+    # Query the database and obtain data as Python objects
+    data = cur.execute("SELECT * FROM webScrapedEventInfo")
+    return data.fetchall()
+  except:
+    print("Error while selecting from webScrapedEventInfo table")
 ############################################################################################################
 
 
 ############################################################################################################
-# Create User Table
-cur.execute('''CREATE TABLE userInfo(userID, paymentLevel, favoritesList)''')
-# Insert a row of data
-cur.execute("INSERT INTO userInfo VALUES ('1', 'Standard', '0')")
-# Query the database and obtain data as Python objects
-data = cur.execute("SELECT * FROM userInfo")
-print(data.fetchall())
+try:
+  # Create User Table
+  cur.execute('''CREATE TABLE IF NOT EXISTS userInfo(userID, paymentLevel, favoritesList)''')
+except:
+  print("Error while creating a sqlite table")
+
+def insertUserInfo(userID, paymentLevel, favoritesList):
+  try:
+    # Insert a row of data
+    cur.execute("INSERT INTO userInfo VALUES (?, ?, ?)", (userID, paymentLevel, favoritesList))
+    con.commit()
+  except:
+    print("Error while inserting into userInfo table")
+
+def printAllUserInfo():
+  try:
+    # Query the database and obtain data as Python objects
+    data = cur.execute("SELECT * FROM userInfo")
+    return data.fetchall()
+  except:
+    print("Error while selecting from userInfo table")
 ############################################################################################################
 
 
