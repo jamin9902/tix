@@ -1,6 +1,5 @@
-'''Scrape Ticketmaster for the ticket availability and pricing 
-   data of a given event by filtering network response logs'''
-
+'''Scrape Ticketmaster for the ticket availability and ticket pricing 
+   data of a given event by filtering through network response logs'''
 
 
 from time import sleep
@@ -8,7 +7,6 @@ import json
 from selenium_stealth import stealth
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import undetected_chromedriver as uc
-
 
 
 # Configure headless undetected chrome driver to webscrape Ticketmaster
@@ -27,7 +25,6 @@ stealth(ticketmaster_uc,
         renderer='Intel Iris OpenGL Engine',
         fix_hairline=True,
         )
-
 
 
 # Access ticket availibility and ticket pricing data for event at url
@@ -63,7 +60,6 @@ def get_ticket_data(driver, url):
     return availability_response
 
 
-
 # Filter through network response logs for keyword 
 def find_network_response(driver, logs, keyword):
 
@@ -82,7 +78,6 @@ def find_network_response(driver, logs, keyword):
                 pass
 
     return {}
-
 
 
 # Testing

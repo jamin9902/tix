@@ -1,4 +1,3 @@
-# This file will work mainly off of https://github.com/arcward/ticketpy
+from tm_api_tools import client
 
-
-
+tm_client = client.ApiClient('api_key')
