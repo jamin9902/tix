@@ -118,12 +118,13 @@ class Event:
         }
     """
 
-    def __init__(self, event_id=None, name=None, start_date=None,
+    def __init__(self, event_id=None, name=None, url=None, start_date=None,
                  start_time=None, status=None, price_ranges=None,
                  venues=None, utc_datetime=None, classifications=None,
                  links=None):
         self.id = event_id
         self.name = name
+        self.url = url
         #: **Local** start date (*YYYY-MM-DD*)
         self.local_start_date = start_date
         #: **Local** start time (*HH:MM:SS*)
@@ -158,6 +159,7 @@ class Event:
         e.json = json_event
         e.id = json_event.get('id')
         e.name = json_event.get('name')
+        e.url = json_event.get('url')
 
         dates = json_event.get('dates', {})
         start_dates = dates.get('start', {})
@@ -249,7 +251,7 @@ class Venue:
     
     """
     def __init__(self, name=None, address=None, city=None, state_code=None,
-                 postal_code=None, latitude=None, longitude=None,
+                 postal_code=None, country_code=None,latitude=None, longitude=None,
                  markets=None, url=None, box_office_info=None,
                  dmas=None, general_info=None, venue_id=None,
                  social=None, timezone=None, images=None,
@@ -259,6 +261,7 @@ class Venue:
         self.id = venue_id
         self.address = address
         self.postal_code = postal_code
+        self.country_code = country_code
         self.city = city
         #: State code (ex: 'GA' not 'Georgia')
         self.state_code = state_code
@@ -318,6 +321,8 @@ class Venue:
             v.longitude = json_venue['location'].get('longitude')
         if 'state' in json_venue:
             v.state_code = json_venue['state'].get('stateCode')
+        if 'country' in json_venue:
+            v.country_code = json_venue['country'].get('countryCode')
 
         _assign_links(v, json_venue)
         return v
